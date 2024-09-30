@@ -33,7 +33,7 @@ jobs:
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
         with:
-          terraform_version: "1.8.3"
+          terraform_version: 1.8.3
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
@@ -44,7 +44,7 @@ jobs:
 
       - name: Terraform Init
         run:
-          cd-infra && terraform init \
+          cd infra && terraform init \
             -backend-config="bucket=${{ inputs.aws-statefile-s3-bucket }}" \
             -backend-config="key=${{ github.event.repository.name }}" \
             -backend-config="region=${{ inputs.aws-region }}" \
@@ -56,7 +56,7 @@ jobs:
       - name: Terraform Plan
         id: terraform-plan
         run:
-          cd-infra && 
+          cd infra && 
           terraform workspaces select ${{ inputs.environment }} || terraform workspaces new ${{ inputs.environment }} &&
           terraform plan -var-file=".envs/${{ inputs.environment }}/terraform.tfvars" -out="${{ inputs.environment }}.plan"
 
