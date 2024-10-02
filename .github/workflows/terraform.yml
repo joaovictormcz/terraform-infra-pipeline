@@ -45,8 +45,8 @@ jobs:
       - name: Read destroy configuration
         id: read-destroy-config
         run: |
-          DESTROY="$(jq - r '.${{ inputs.enviroment }}' ./infra/destroy_config.json)"
-          echo "destroy=$(echo $DESTROY)" >> $GITHUB_OUTPUT
+          DESTROY="$(jq -r '.${{ inputs.environment }}' ./infra/destroy_config.json)"
+          echo "destroy=$(echo $DESTROY)" >> $GITHUB_OUTPUT          
 
       - name: Terraform Init
         run: |
@@ -62,9 +62,9 @@ jobs:
       - name: Terraform Destroy
         if: steps.read-destroy-config.outputs.destroy == 'true'
         id: terraform-destroy
-        run: cd infra && 
-          terraform workspace select ${{ inputs.enviroment }} || terraform workspace new ${{ inputs.enviroment }} &&
-          terraform destroy -var-file="./envs/${{ inputs.environment }}/terraform.tfvars" -auto-approve
+        run: cd infra &&
+            terraform workspace select ${{ inputs.environment }} || terraform workspace new ${{ inputs.environment }} &&
+            terraform destroy -var-file="./envs/${{ inputs.environment }}/terraform.tfvars" -auto-approve
 
       - name: Terraform Plan
         if: steps.read-destroy-config.outputs.destroy != 'true'
